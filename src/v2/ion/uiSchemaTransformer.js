@@ -205,10 +205,19 @@ const createUISchema = (transformedResp, remediationForm) => {
     options: createFactorTypeOptions(options, factors),
   });
 
-  const getAuthenticatorsUiSchema = ({ options }, authenticators) => ({
-    type: 'authenticatorSelect',
-    options: createAuthenticatorOptions(options, authenticators),
-  });
+  const getAuthenticatorsEnrollUiSchema = ({ options }, authenticators) => {
+    return {
+      type: 'authenticatorEnrollSelect',
+      options: createAuthenticatorOptions(options, authenticators),
+    };
+  };
+
+  const getAuthenticatorsVerifyUiSchema = ({ options }, authenticators) => {
+    return {
+      type: 'authenticatorVerifySelect',
+      options: createAuthenticatorOptions(options, authenticators),
+    };
+  };
 
   return remediationValue.map(ionFormField => {
     const uiSchema = {
@@ -243,7 +252,7 @@ const createUISchema = (transformedResp, remediationForm) => {
       && remediationForm.name === 'select-authenticator-authenticate') {
       const authenticators = transformedResp.authenticatorEnrollments
         && transformedResp.authenticatorEnrollments.value || [];
-      Object.assign(uiSchema, getAuthenticatorsUiSchema(ionFormField, authenticators));
+      Object.assign(uiSchema, getAuthenticatorsVerifyUiSchema(ionFormField, authenticators));
     }
 
     if (ionFormField.name === 'authenticator'
@@ -251,7 +260,7 @@ const createUISchema = (transformedResp, remediationForm) => {
       const authenticators = transformedResp.authenticators
         && transformedResp.authenticators.value || [];
       // TODO: OKTA-302497: use different type for enrollment flow.
-      Object.assign(uiSchema, getAuthenticatorsUiSchema(ionFormField, authenticators));
+      Object.assign(uiSchema, getAuthenticatorsEnrollUiSchema(ionFormField, authenticators));
     }
 
     return Object.assign(
